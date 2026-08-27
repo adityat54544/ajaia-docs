@@ -10,3 +10,4 @@ server.log
 server2.log
 .vercel
 .env*
+vercel-login.log

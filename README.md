@@ -61,3 +61,26 @@ vercel --prod
 The database is external (Atlas), so the deployment is stateless — clone the repo, point it at the same `MONGODB_URI`, and your data is there.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) and [AI_WORKFLOW.md](./AI_WORKFLOW.md).
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Language | TypeScript (full stack) + JavaScript (scripts) |
+| Framework | Next.js 15 (App Router) � frontend & API in one deployable app |
+| UI | React 19, Tailwind CSS 4, Framer Motion (animations, 3D glass UI) |
+| Rich text | TipTap 2 (ProseMirror) |
+| Database | MongoDB Atlas via Mongoose ODM |
+| Auth | bcryptjs password hashing + HMAC-SHA256 signed session cookies |
+| File handling | mammoth (.docx import), in-Atlas attachment storage |
+| Testing | Vitest + Testing Library (unit), custom end-to-end smoke suite (31 checks) |
+| Hosting | Vercel (app) + MongoDB Atlas (data) |
+| Tooling | Node.js 24, npm, Git/GitHub, Vercel CLI |
+| Platform | Built and deployed from Windows 11 (PowerShell + VS Code) |
+
+---
+
+**Created by Aditya Tiwari**
+
+- Email: [adityat100810081008@gmail.com](mailto:adityat100810081008@gmail.com)
+- GitHub: [adityat54544](https://github.com/adityat54544)
