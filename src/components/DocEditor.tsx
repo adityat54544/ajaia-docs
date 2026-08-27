@@ -233,7 +233,7 @@ export default function DocEditor({
   if (!editor) return null;
 
   return (
-    <main className="max-w-5xl mx-auto p-6">
+    <main className="max-w-5xl mx-auto p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <Link href="/" className="text-blue-600 hover:underline text-sm">← All documents</Link>
         <div className="flex items-center gap-3">
@@ -289,7 +289,7 @@ export default function DocEditor({
         Owned by {initialDoc.owner?.name ?? "you"} · Your role: <b>{role}</b>
       </p>
 
-      <div className="flex flex-wrap gap-1.5 mb-4 border-b pb-3">
+      <div className="flex flex-wrap gap-1.5 mb-4 border-b pb-3 gap-y-2">
         {canEdit && (
           <>
             <button onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive("bold"))}><b>B</b></button>
@@ -322,7 +322,7 @@ export default function DocEditor({
         <a href={`/api/documents/${initialDoc.id}/export?format=pdf`} target="_blank" rel="noreferrer" className={`${btn(false)}`}>↓ PDF</a>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 rounded-xl border bg-white p-6 shadow-sm">
           <EditorContent editor={editor} />
           {suggestionMode && (
@@ -339,7 +339,7 @@ export default function DocEditor({
               animate={{ opacity: 1, x: 0, width: 320 }}
               exit={{ opacity: 0, x: 30, width: 0 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="w-80 shrink-0 rounded-xl border bg-white p-4 shadow-sm overflow-y-auto max-h-[75vh]"
+              className="w-80 shrink-0 rounded-xl border bg-white p-4 shadow-sm overflow-y-auto max-h-[75vh] max-sm:fixed max-sm:inset-x-4 max-sm:bottom-4 max-sm:top-auto max-sm:w-auto max-sm:max-h-[45vh] max-sm:z-40 max-sm:shadow-2xl"
             >
               {panel === "comments" && (
                 <div>

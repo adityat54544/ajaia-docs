@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Logo3d from "@/components/Logo3d";
 
 type Doc = {
   id: string;
@@ -122,8 +123,8 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
 
   return (
     <main className="max-w-3xl mx-auto p-6">
-      <header className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold">Ajaia Docs</h1>
+      <header className="flex flex-wrap items-center justify-between gap-3 mb-8">
+        <Logo3d />
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600">Signed in as {user.name}</span>
           <button
@@ -137,7 +138,7 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
 
       {error && <p className="mb-4 rounded bg-red-50 p-3 text-red-700">{error}</p>}
 
-      <div className="flex flex-wrap gap-3 mb-10">
+      <div className="flex flex-wrap gap-3 mb-10 mobile-stack">
         <button
           onClick={createDoc}
           className="btn-glass rounded-xl px-5 py-2.5 text-white font-medium"

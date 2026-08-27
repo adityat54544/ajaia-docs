@@ -64,12 +64,12 @@ export default function ShareDialog({
       onClick={onDone}
     >
       <div
-        className="bg-white rounded-xl p-6 w-full max-w-md"
+        className="bg-white rounded-xl p-5 sm:p-6 w-full max-w-md max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-4">Share document</h2>
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <select
             value={userId}
             onChange={(e) => setUserId(e.target.value)}

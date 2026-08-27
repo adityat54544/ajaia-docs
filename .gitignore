@@ -11,3 +11,4 @@ server2.log
 .vercel
 .env*
 vercel-login.log
+server3.log

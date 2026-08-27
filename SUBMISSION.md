@@ -1,5 +1,6 @@
 ﻿# SUBMISSION — Ajaia Docs
 
+**Walkthrough video:** submitted via the Google Drive folder (see VIDEO_URL in the submission form)
 **Live product:** https://ajaia-docs-psi-one.vercel.app
 **Source code:** https://github.com/adityat54544/ajaia-docs
 **Author:** Aditya Tiwari — adityat100810081008@gmail.com
@@ -15,7 +16,7 @@
 | `scripts/smoke.mjs` | 31-check end-to-end API test suite (`npm run smoke`) |
 | `scripts/seed.mjs` | Seeds demo users + intro documents (`npm run seed`) |
 | `src/lib/access.test.ts` | Unit tests for the role/permission matrix (`npm test`) |
-| `screenshots/` | Product screenshots |
+| `screenshots/` | Product screenshots (dashboard, editor, share dialog, comments, version history, signup) |
 | `VIDEO_URL.txt` | Link to the 3–5 minute walkthrough video |
 
 ## Test credentials (seeded demo accounts)

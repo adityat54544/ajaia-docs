@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Logo3d from "@/components/Logo3d";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -46,7 +47,8 @@ export default function SignupPage() {
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         className="glass-card w-full max-w-md p-8"
       >
-        <h1 className="text-2xl font-bold mb-1">Create your account</h1>
+        <Logo3d size="lg" />
+        <h1 className="text-2xl font-bold mt-5 mb-1">Create your account</h1>
         <p className="text-gray-500 text-sm mb-6">Free, instant, and stored in MongoDB Atlas</p>
 
         {error && (
