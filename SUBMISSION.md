@@ -16,7 +16,7 @@
 | `scripts/smoke.mjs` | 31-check end-to-end API test suite (`npm run smoke`) |
 | `scripts/seed.mjs` | Seeds demo users + intro documents (`npm run seed`) |
 | `src/lib/access.test.ts` | Unit tests for the role/permission matrix (`npm test`) |
-| `screenshots/` | Product screenshots (dashboard, editor, share dialog, comments, version history, signup) |
+| `screenshots/` | Product screenshots (login, dashboard, editor with Log out, share dialog, comments, version history + mobile) |
 | `VIDEO_URL.txt` | Link to the 3–5 minute walkthrough video |
 
 ## Test credentials (seeded demo accounts)
