@@ -16,7 +16,7 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   const result = await loadDocWithAccess(id, String(user._id));
   if ("error" in result) return NextResponse.json({ error: "No access" }, { status: 403 });
-  if (result.role === "view") return NextResponse.json({ error: "Read-only access" }, { status: 403 });
+  if (!result.canEdit) return NextResponse.json({ error: "Read-only access" }, { status: 403 });
 
   let form: FormData;
   try {

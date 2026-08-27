@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import { loadDocWithAccess } from "@/lib/documents";
 import { Attachment } from "@/models";
+import type { Role } from "@/lib/access";
 import DocEditor from "@/components/DocEditor";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ export default async function DocPage({ params }: { params: Promise<{ id: string
           size: a.size,
         })),
       }}
-      role={result.role}
+      role={result.role as Exclude<Role, null>}
       me={{ id: String(user._id), name: user.name }}
     />
   );

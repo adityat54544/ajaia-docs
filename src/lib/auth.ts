@@ -2,7 +2,7 @@
 import { cookies } from "next/headers";
 import { User } from "@/models";
 import { connectDB } from "./mongoose";
-import { resolveRole } from "./access";
+import { resolveRole, canComment, canSuggest, canEditContent, canManage } from "./access";
 
 export const SESSION_COOKIE = "ajaia_session";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
@@ -59,5 +59,5 @@ export async function getCurrentUser() {
   }
 }
 
-export { resolveRole };
-export type { AccessRole } from "./access";
+export { resolveRole, canComment, canSuggest, canEditContent, canManage };
+export type { Role } from "./access";

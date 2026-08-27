@@ -24,7 +24,8 @@ const ShareSchema = new Schema(
   {
     document: { type: Schema.Types.ObjectId, ref: "Document", required: true, index: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    permission: { type: String, enum: ["view", "edit"], default: "view" },
+    // legacy values "view"/"edit" are normalized in lib/access.ts
+  permission: { type: String, enum: ["viewer", "commenter", "suggester", "editor", "view", "edit"], default: "viewer" },
   },
   { timestamps: true }
 );
@@ -56,3 +57,57 @@ export const Document =
 export const Share = models.Share ?? model("Share", ShareSchema);
 export const Attachment =
   models.Attachment ?? model("Attachment", AttachmentSchema);
+
+// --- collaboration feature models ---
+
+const CommentSchema = new Schema(
+  {
+    document: { type: Schema.Types.ObjectId, ref: "Document", required: true, index: true },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    authorName: { type: String, required: true },
+    quote: { type: String, default: "" }, // selected text the comment anchors to
+    body: { type: String, required: true },
+    resolved: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+const SuggestionSchema = new Schema(
+  {
+    document: { type: Schema.Types.ObjectId, ref: "Document", required: true, index: true },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    authorName: { type: String, required: true },
+    originalHtml: { type: String, required: true },
+    suggestedHtml: { type: String, required: true },
+    status: { type: String, enum: ["pending", "accepted", "rejected"], default: "pending" },
+  },
+  { timestamps: true }
+);
+
+const VersionSchema = new Schema(
+  {
+    document: { type: Schema.Types.ObjectId, ref: "Document", required: true, index: true },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    savedBy: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+// Short-lived presence rows; TTL cleans them up automatically
+const PresenceSchema = new Schema(
+  {
+    document: { type: Schema.Types.ObjectId, ref: "Document", required: true, index: true },
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    color: { type: String, required: true },
+    updatedAt: { type: Date, index: { expires: 75 } },
+  },
+  { timestamps: true }
+);
+PresenceSchema.index({ document: 1, userId: 1 }, { unique: true });
+
+export const Comment = models.Comment ?? model("Comment", CommentSchema);
+export const Suggestion = models.Suggestion ?? model("Suggestion", SuggestionSchema);
+export const Version = models.Version ?? model("Version", VersionSchema);
+export const Presence = models.Presence ?? model("Presence", PresenceSchema);

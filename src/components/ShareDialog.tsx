@@ -18,7 +18,7 @@ export default function ShareDialog({
   const [shares, setShares] = useState<Share[]>(initialShares);
   const [users, setUsers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [userId, setUserId] = useState("");
-  const [permission, setPermission] = useState<"view" | "edit">("edit");
+  const [permission, setPermission] = useState<"viewer" | "commenter" | "suggester" | "editor">("editor");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function ShareDialog({
           </select>
           <select
             value={permission}
-            onChange={(e) => setPermission(e.target.value as "view" | "edit")}
+            onChange={(e) => setPermission(e.target.value as "viewer" | "commenter" | "suggester" | "editor")}
             className="rounded border px-3 py-2 text-sm"
           >
             <option value="edit">Can edit</option>

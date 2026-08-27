@@ -1,6 +1,6 @@
 ﻿import { Document, Share, User } from "@/models";
 import { connectDB } from "./mongoose";
-import { resolveRole, AccessRole } from "./access";
+import { resolveRole, canEditContent } from "./access";
 
 export type PlainShare = { id: string; userId: string; permission: string; user: { id: string; name: string } };
 export type PlainDoc = {
@@ -45,14 +45,15 @@ export async function loadDocWithAccess(id: string, userId: string) {
   const doc = await Document.findById(id).lean<DocLike>();
   if (!doc) return { error: "not_found" as const };
   const shares = await sharesFor(doc._id);
-  const role: AccessRole = resolveRole(
+  const role = resolveRole(
     { ownerId: String(doc.owner), shares: shares.map((s) => ({ userId: s.userId, permission: s.permission })) },
     userId
   );
   if (!role) return { error: "forbidden" as const };
+  const canEdit = canEditContent(role);
   let owner: { _id: unknown; name: string } | null = null;
   if (doc.owner) {
     owner = await User.findById(doc.owner).select("name").lean<{ _id: unknown; name: string }>();
   }
-  return { doc, role, plain: plainFromDoc(doc, owner, shares) };
+  return { doc, role, canEdit, plain: plainFromDoc(doc, owner, shares) };
 }

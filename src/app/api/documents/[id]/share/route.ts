@@ -9,7 +9,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 const shareSchema = z.object({
   userId: z.string().min(1),
-  permission: z.enum(["view", "edit"]),
+  permission: z.enum(["viewer", "commenter", "suggester", "editor"]),
 });
 
 // GET /api/documents/:id/share — list who has access

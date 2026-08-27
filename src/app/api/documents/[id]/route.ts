@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { Document, Attachment } from "@/models";
+import { Document, Attachment, Version } from "@/models";
 import { getCurrentUser } from "@/lib/auth";
 import { loadDocWithAccess } from "@/lib/documents";
 
@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
       { status: result.error === "not_found" ? 404 : 403 }
     );
   }
-  if (result.role === "view") return NextResponse.json({ error: "Read-only access" }, { status: 403 });
+  if (!result.canEdit) return NextResponse.json({ error: "Read-only access" }, { status: 403 });
 
   let raw: unknown;
   try {
@@ -56,6 +56,12 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
     );
   }
   const doc = await Document.findByIdAndUpdate(id, parsed.data, { new: true });
+  if (parsed.data.content) {
+    // Version history: snapshot every content save (keep last 30)
+    await Version.create({ document: id, title: doc!.title, content: parsed.data.content, savedBy: user.name });
+    const old = await Version.find({ document: id }).sort({ createdAt: -1 }).skip(30).select("_id");
+    if (old.length) await Version.deleteMany({ _id: { $in: old.map((v) => v._id) } });
+  }
   return NextResponse.json({ document: { id: String(doc!._id), title: doc!.title, content: doc!.content } });
 }
 
