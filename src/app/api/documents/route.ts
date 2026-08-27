@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Document, Share, User } from "@/models";
 import { connectDB } from "@/lib/mongoose";
@@ -32,13 +32,19 @@ export async function GET() {
   }
 
   const myShares = await Share.find({ user: uid }).populate<{ document: null | { _id: unknown; title: string; content: string; owner: unknown; updatedAt: Date } }>("document");
-  const ownerIds = [...new Set(myShares.map((s) => String(s.document?.owner)).filter(Boolean))];
+  // Guard: String(undefined) yields the truthy string "undefined", which would break the
+  // $in query below with a Mongoose CastError (500).
+  const ownerIds = [...new Set(
+    myShares
+      .map((s) => (s.document && s.document.owner ? String(s.document.owner) : null))
+      .filter((v) => !!v && v !== "undefined")
+  )];
   const owners = await User.find({ _id: { $in: ownerIds } }).select("name").lean<{ _id: unknown; name: string }[]>();
   const ownerMap = new Map(owners.map((o) => [String(o._id), o]));
   const shared: Record<string, unknown>[] = [];
 for (const s of myShares) {
   if (!s.document) continue;
-  const owner = ownerMap.get(String(s.document.owner)) ?? null;
+  const owner = s.document.owner ? (ownerMap.get(String(s.document.owner)) ?? null) : null;
   shared.push({
     ...plainFromDoc(s.document, owner, await sharesFor(s.document._id)),
     permission: s.permission,

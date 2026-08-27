@@ -1,6 +1,17 @@
 # Ajaia Docs
 
-A lightweight collaborative document editor inspired by Google Docs. Built with **Next.js 15 + TypeScript + TipTap**, persisted in **MongoDB Atlas** so everything stays synced everywhere.
+A lightweight collaborative document editor inspired by Google Docs. Built with **Next.js 15 + TypeScript + TipTap**, persisted in **MongoDB Atlas** so everything stays synced across devices and deployments.
+
+> 🚀 **Live:** https://ajaia-docs-psi-one.vercel.app
+> 💻 **Source:** https://github.com/adityat54544/ajaia-docs
+
+## Demo video
+
+Watch a walkthrough of the full workflow — auth, editing, sharing, collaboration, and export:
+
+[▶️ Watch the Ajaia Docs demo video](https://drive.google.com/file/d/17NMfip8nu0Uz60ZSWDYsoVjE93MOKhUS/view?usp=sharing)
+
+---
 
 ## Quick start
 
@@ -12,7 +23,7 @@ MONGODB_URI="mongodb+srv://<user>:<password>@<cluster>/ajaia-docs?retryWrites=tr
 SESSION_SECRET="any-long-random-string"
 ```
 
-3. Run it:
+3. Run:
 
 ```bash
 npm install
@@ -20,7 +31,7 @@ npm run seed     # demo users + intro documents
 npm run dev      # http://localhost:3000
 ```
 
-## Demo accounts (password: `demo1234`)
+## Demo accounts (password: `demo1234`) or sign up free
 
 | Name          | Email              |
 | ------------- | ------------------ |
@@ -28,55 +39,63 @@ npm run dev      # http://localhost:3000
 | Priya Sharma  | priya@ajaia.dev    |
 | Marcus Chen   | marcus@ajaia.dev   |
 
-Or **sign up** with your own email — accounts and documents all live in Atlas.
+Or **sign up** with any email — accounts and documents all live in MongoDB Atlas.
 
 ## Features
 
-- **Auth** — email/password sign-up & sign-in (bcrypt), HMAC-signed httpOnly session cookie, one-click demo accounts, logout
-- **Rich-text editing** — bold, italic, underline, H1-H3, bullet & numbered lists via TipTap; debounced autosave with live save indicator
-- **Sharing** — owners grant edit or view-only access to any user, revoke anytime; dashboard clearly separates *Owned* vs *Shared with me*; enforced server-side on every route
-- **File handling** — import `.txt` / `.md` / `.docx` into new documents; attach files (max 5 MB) stored in MongoDB and downloadable from any device
-- **Persistence** — everything in MongoDB Atlas: users, documents, shares, attachment bytes
-- **UI** — framer-motion transitions, skeleton loaders, toasts, 3D glass buttons
+### Editing
+- Create, rename, delete, and reopen documents
+- Rich text: **bold**, *italic*, <u>underline</u>, H1–H3, bullet & numbered lists
+- Debounced autosave with a live save-status indicator
+
+### Auth
+- Email/password sign-up & sign-in (bcryptjs hashing), HMAC-SHA256 signed httpOnly cookies
+- Proper **Log out** (dashboard & editor)
+
+### Files
+- Import `.txt` / `.md` / `.docx` into new documents (mammoth for .docx)
+- Attach files (max 5 MB) stored in MongoDB, downloadable from any device
+
+### Sharing & collaboration
+- Roles: **Viewer → Commenter → Suggester → Editor → Owner**, enforced server-side on every route
+- Dashboard separates **Owned** vs **Shared with you**
+- **Live presence** avatars (viewers in real time)
+- **Comments** (text-anchored, resolve/unresolve) and **Suggestion mode** (accept/reject)
+
+### Versions & export
+- **Version history** (last 30) with one-click restore
+- **Export** as Markdown (`.md`) or PDF (print view)
+
+### UI & polish
+- Framer Motion: page transitions, staggered lists, spring modals, toasts
+- 3D animated wordmark with cursor parallax, 3D glass buttons, skeleton loaders
+- Mobile-responsive; respects `prefers-reduced-motion`
 
 ## Verification
 
 ```bash
-npm test                      # unit tests (access-control logic)
-npm run build                 # type + build gate
-npm start &                   # then:
-npm run smoke -- http://localhost:3000   # 14-check end-to-end API test
+npm test                        # unit tests (role/permission matrix)
+npm run build                   # type + build gate
+npm run smoke -- http://localhost:3000   # 34-check end-to-end suite
 ```
+
+The 34-check smoke suite runs against the database and covers every feature end to end: auth, documents, sharing roles, presence, comments, suggestions, versions, exports, files, logout, and denial paths.
 
 ## Deployment (Vercel)
 
 ```bash
-npm i -g vercel
-vercel            # link the project
 vercel env add MONGODB_URI production
 vercel env add SESSION_SECRET production
 vercel --prod
 ```
 
-The database is external (Atlas), so the deployment is stateless — clone the repo, point it at the same `MONGODB_URI`, and your data is there.
+The database is external (Atlas), so deployments are stateless — clone the repo, point it at the same `MONGODB_URI`, and your data persists.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) and [AI_WORKFLOW.md](./AI_WORKFLOW.md).
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for priorities & tradeoffs and [AI_WORKFLOW.md](./AI_WORKFLOW.md) for how AI was used.
 
 ## Tech stack
 
-| Layer | Technology |
-| --- | --- |
-| Language | TypeScript (full stack) + JavaScript (scripts) |
-| Framework | Next.js 15 (App Router) � frontend & API in one deployable app |
-| UI | React 19, Tailwind CSS 4, Framer Motion (animations, 3D glass UI) |
-| Rich text | TipTap 2 (ProseMirror) |
-| Database | MongoDB Atlas via Mongoose ODM |
-| Auth | bcryptjs password hashing + HMAC-SHA256 signed session cookies |
-| File handling | mammoth (.docx import), in-Atlas attachment storage |
-| Testing | Vitest + Testing Library (unit), custom end-to-end smoke suite (31 checks) |
-| Hosting | Vercel (app) + MongoDB Atlas (data) |
-| Tooling | Node.js 24, npm, Git/GitHub, Vercel CLI |
-| Platform | Built and deployed from Windows 11 (PowerShell + VS Code) |
+TypeScript, Next.js 15, React 19, Tailwind CSS 4, Framer Motion, TipTap 2, MongoDB Atlas (Mongoose), bcryptjs, mammoth, Vitest, Vercel, Node.js 24, Windows 11 (VS Code).
 
 ---
 
