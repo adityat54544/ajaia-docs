@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Logo3d from "@/components/Logo3d";
+import { useToast } from "./ToastProvider";
 
 type Doc = {
   id: string;
@@ -23,6 +24,8 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
   const [importMsg, setImportMsg] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { toast } = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -54,6 +57,7 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
       return;
     }
     const d = await res.json();
+    toast("Document created");
     router.push(`/doc/${d.document.id}`);
   }
 
@@ -72,6 +76,7 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
         setImportMsg(d.error ?? "Import failed");
         return;
       }
+      toast("File imported into a new document");
       router.push(`/doc/${d.document.id}`);
     } catch {
       setImportMsg("Import failed");
@@ -81,8 +86,19 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
     }
   }
 
+  async function deleteDoc(id: string) {
+    const res = await fetch(`/api/documents/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      toast((await res.json().catch(() => ({}))).error ?? "Delete failed");
+      return;
+    }
+    setOwned((o) => o.filter((d) => d.id !== id));
+    setDeletingId(null);
+    toast("Document deleted");
+  }
+
   async function signOut() {
-    await fetch("/api/auth/login", { method: "DELETE" });
+    await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
   }
@@ -92,6 +108,7 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, x: -40 }}
         transition={{ delay: index * 0.06, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         whileHover={{ y: -3 }}
       >
@@ -109,13 +126,55 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
               : ""}
           </div>
         </div>
-        <span
-          className={`text-xs px-2 py-1 rounded-full ${
-            isShared ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
-          }`}
-        >
-          {isShared ? "Shared with me" : "Owned"}
-        </span>
+        <div className="flex items-center gap-2">
+          {!isShared && (
+            <div className="relative">
+              <button
+                aria-label="Delete document"
+                title="Delete document"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDeletingId(deletingId === doc.id ? null : doc.id);
+                }}
+                className="w-9 h-9 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition flex items-center justify-center"
+              >
+                🗑
+              </button>
+              {deletingId === doc.id && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  className="absolute right-0 top-10 z-20 bg-white border rounded-xl shadow-xl p-3 w-52"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <p className="text-xs mb-2">Delete “{doc.title}”?</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => { e.preventDefault(); deleteDoc(doc.id); }}
+                      className="flex-1 rounded-lg bg-red-600 text-white text-xs py-1.5 hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={(e) => { e.preventDefault(); setDeletingId(null); }}
+                      className="flex-1 rounded-lg border text-xs py-1.5 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          )}
+          <span
+            className={`text-xs px-2 py-1 rounded-full ${
+              isShared ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {isShared ? "Shared with me" : "Owned"}
+          </span>
+        </div>
       </Link>
       </motion.div>
     );
@@ -131,7 +190,7 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
             onClick={signOut}
             className="text-sm rounded border px-3 py-1.5 hover:bg-gray-100"
           >
-            Switch user
+            Log out
           </button>
         </div>
       </header>
@@ -180,9 +239,11 @@ export default function Dashboard({ user }: { user: { id: string; name: string }
               {owned.length === 0 && (
                 <p className="text-gray-500 text-sm">No documents yet — create one above.</p>
               )}
+              <AnimatePresence>
               {owned.map((d, i) => (
                 <DocRow key={d.id} doc={d} shared={false} index={i} />
               ))}
+              </AnimatePresence>
             </div>
           </section>
 

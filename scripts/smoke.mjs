@@ -187,5 +187,16 @@ fd3.append("file", new File(["x"], "virus.exe", { type: "application/octet-strea
 res = await fetch(`${base}/api/import`, { method: "POST", headers: a.headers, body: fd3 });
 check("unsupported type rejected (415)", res.status === 415);
 
+// 14. logout clears the session
+const lo = session();
+await login(lo, "aditya@ajaia.dev");
+res = await fetch(`${base}/api/documents`, { headers: lo.headers });
+check("logged-in session works before logout", res.status === 200);
+res = await fetch(`${base}/api/auth/logout`, { method: "POST", headers: lo.headers });
+check("logout succeeds", res.ok);
+setCookie(lo, res);
+res = await fetch(`${base}/api/documents`, { headers: lo.headers });
+check("session invalid after logout (401)", res.status === 401);
+
 console.log(failures === 0 ? "\nAll checks passed." : `\n${failures} check(s) FAILED.`);
 process.exit(failures === 0 ? 0 : 1);

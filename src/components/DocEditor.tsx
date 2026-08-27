@@ -1,12 +1,14 @@
 ﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import ShareDialog from "./ShareDialog";
+import { useToast } from "./ToastProvider";
 import type { Role } from "@/lib/access";
 import { canEditContent, canSuggest, canComment } from "@/lib/access";
 
@@ -40,8 +42,8 @@ export default function DocEditor({
   const [showShare, setShowShare] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>(initialDoc.attachments);
   const [attachMsg, setAttachMsg] = useState("");
-  const [toast, setToast] = useState("");
   const attachRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const canEdit = canEditContent(role);
   const titleRef = useRef(title);
   titleRef.current = title;
@@ -56,10 +58,7 @@ export default function DocEditor({
   const [suggestionMode, setSuggestionMode] = useState(false);
   const lastSavedRef = useRef(initialDoc.content);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 3000);
-  }, []);
+  const showToast = useToast().toast;
 
   const editor = useEditor({
     extensions: [StarterKit, Underline],
@@ -270,6 +269,18 @@ export default function DocEditor({
           {role === "owner" && (
             <button onClick={() => setShowShare(true)} className="btn-glass rounded-xl px-4 py-2 text-sm text-white font-medium">Share</button>
           )}
+          <button
+            title="Sign out of Ajaia Docs"
+            onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
+              showToast("Signed out");
+              router.push("/login");
+              router.refresh();
+            }}
+            className="btn-glass-soft rounded-xl px-3 py-2 text-sm"
+          >
+            Log out
+          </button>
         </div>
       </div>
 
@@ -433,16 +444,6 @@ export default function DocEditor({
         </ul>
       </section>
 
-      {toast && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-gray-900 text-white text-sm px-5 py-2.5 shadow-xl z-50"
-        >
-          {toast}
-        </motion.div>
-      )}
 
       {showShare && role === "owner" && (
         <ShareDialog docId={initialDoc.id} ownerId={me.id} initialShares={initialDoc.shares} onDone={() => setShowShare(false)} />

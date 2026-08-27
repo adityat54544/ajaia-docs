@@ -12,3 +12,4 @@ server2.log
 .env*
 vercel-login.log
 server3.log
+server4.log

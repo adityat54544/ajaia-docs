@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useToast } from "./ToastProvider";
 
 type Share = { id: string; permission: string; user: { id: string; name: string } };
 
@@ -20,6 +22,7 @@ export default function ShareDialog({
   const [userId, setUserId] = useState("");
   const [permission, setPermission] = useState<"viewer" | "commenter" | "suggester" | "editor">("editor");
   const [error, setError] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     fetch("/api/users")
@@ -55,7 +58,10 @@ export default function ShareDialog({
     const res = await fetch(`/api/documents/${docId}/share?userId=${uid}`, {
       method: "DELETE",
     });
-    if (res.ok) setShares((s) => s.filter((x) => x.user.id !== uid));
+    if (res.ok) {
+      setShares((s) => s.filter((x) => x.user.id !== uid));
+      toast("Access revoked");
+    }
   }
 
   return (
