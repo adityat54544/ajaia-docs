@@ -1,0 +1,119 @@
+﻿@import "tailwindcss";
+
+/* ---------- 3D glass buttons ---------- */
+.btn-glass {
+  position: relative;
+  background: linear-gradient(145deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.15),
+    0 8px 20px -6px rgba(37, 99, 235, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, filter 0.18s ease;
+  transform-style: preserve-3d;
+  overflow: hidden;
+  cursor: pointer;
+}
+.btn-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.btn-glass:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
+    0 14px 28px -8px rgba(37, 99, 235, 0.65),
+    0 3px 6px rgba(0, 0, 0, 0.14);
+}
+.btn-glass:hover::before { transform: translateX(120%); }
+.btn-glass:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.25),
+    0 2px 6px -2px rgba(37, 99, 235, 0.4);
+}
+.btn-glass:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+
+/* frosted neutral variant for secondary buttons */
+.btn-glass-soft {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 244, 250, 0.8));
+  backdrop-filter: blur(10px);
+  color: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 6px 16px -6px rgba(15, 23, 42, 0.18);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease;
+  cursor: pointer;
+}
+.btn-glass-soft:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 22px -8px rgba(15, 23, 42, 0.25); }
+.btn-glass-soft:active { transform: translateY(1px) scale(0.98); }
+
+/* ---------- glass card ---------- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 1.5rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 24px 60px -20px rgba(15, 23, 42, 0.25);
+}
+
+/* soft animated background glow for auth pages */
+.auth-glow {
+  background:
+    radial-gradient(600px circle at 15% 20%, rgba(59, 130, 246, 0.14), transparent 45%),
+    radial-gradient(700px circle at 85% 80%, rgba(139, 92, 246, 0.12), transparent 45%),
+    #f8fafc;
+}
+
+/* skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, #eef1f5 25%, #e2e8f0 50%, #eef1f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 0.75rem;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* pulsing save dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.save-pulse { animation: pulse-dot 1.1s infinite; }
+
+/* ---------- TipTap editor styling ---------- */
+.ProseMirror {
+  outline: none;
+  min-height: 60vh;
+  padding: 1rem 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.ProseMirror h1 { font-size: 2rem; font-weight: 700; margin: 1.2rem 0 0.5rem; }
+.ProseMirror h2 { font-size: 1.5rem; font-weight: 600; margin: 1rem 0 0.4rem; }
+.ProseMirror h3 { font-size: 1.2rem; font-weight: 600; margin: 0.8rem 0 0.3rem; }
+.ProseMirror ul { list-style: disc; padding-left: 1.6rem; margin: 0.5rem 0; }
+.ProseMirror ol { list-style: decimal; padding-left: 1.6rem; margin: 0.5rem 0; }
+.ProseMirror p { margin: 0.4rem 0; }
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.ProseMirror[contenteditable="false"] { background: #fafafa; border-radius: 0.5rem; }
